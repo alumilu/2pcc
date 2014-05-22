@@ -4,6 +4,8 @@ import time
 import pprint
 import smtplib
 import email.utils
+import base64
+
 from email.mime.text import MIMEText
 
 from dropbox import client, rest, session
