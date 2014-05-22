@@ -7,16 +7,21 @@ import email.utils
 from email.mime.text import MIMEText
 
 from dropbox import client, rest, session
+from ListenerClient import WhatsappListenerClient
 
+#dropbox
 APP_KEY = 'q1ru9t5gazblj6k'
 APP_SECRET = 'rksdnwguwh99tqq'
-#TOKEN_FILE = "token_store.txt"
 
+#gmail
 fromaddr = 'hubert.lu@gmail.com'  
 toaddrs  = 'hubert.lu@gmail.com'  
-# Credentials (if needed)  
 username = 'hubert.lu@gmail.com'  
 password = '@luminum013175'  
+
+#Whatsapp
+phone = "886929810849"
+pwd="1xclLFIzKGgRihMBWJZub+n8Ifc="
 
 def handleDelta(dropboxclt, entries):
     print "handling changes: " 
@@ -42,6 +47,9 @@ def handleDelta(dropboxclt, entries):
 def main():
     if APP_KEY == '' or  APP_SECRET == '':
         exit("You need to set your APP_KEY and APP_SECRET!")
+        
+    whatsappListner = WhatsappListenerClient(True, True)
+    whatsappListner.login(phone, base64.b64decode(bytes(pwd.encode('utf-8'))))
 	
     sess = session.DropboxSession(APP_KEY, APP_SECRET)
     request_token = sess.obtain_request_token()
