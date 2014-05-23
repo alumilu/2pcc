@@ -1,1 +1,2 @@
-*.gyc
+*.pyc
+src/*.pyc
