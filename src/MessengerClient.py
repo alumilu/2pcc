@@ -22,6 +22,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #import os
 import datetime, sys
 import base64
+import string
 
 from Yowsup.connectionmanager import YowsupConnectionManager
 
@@ -30,7 +31,7 @@ from Yowsup.connectionmanager import YowsupConnectionManager
 
 class WhatsappListenerClient:
 	
-	def __init__(self, username, password, keepAlive = False, sendReceipts = False):
+	def __init__(self, username, password, boxClient, keepAlive = False, sendReceipts = False):
 		connectionManager = YowsupConnectionManager()
 		connectionManager.setAutoPong(keepAlive)
 
@@ -38,6 +39,7 @@ class WhatsappListenerClient:
 		self.sendReceipts = sendReceipts
 		self.username = username
 		self.password = base64.b64decode(bytes(password.encode('utf-8')))
+		self.boxClient = boxClient
 		
 		self.signalsInterface = connectionManager.getSignalsInterface()
 		self.methodsInterface = connectionManager.getMethodsInterface()
@@ -69,6 +71,17 @@ class WhatsappListenerClient:
 		print("%s [%s]:%s"%(jid, formattedDate, messageContent))
 		
 		#todo: switch messageContent
-
+		cmd, file = messageContent.split(':')
+		cmd.lower()
+		
+		if cmd is 'up' :
+		    self.boxClient.uploadfile(file)
+		elif cmd 'share':
+		    self.boxClient.sharefile(file)
+		elif cmd is 'list':
+		    self.boxClient.listfiles()
+		else:
+		    print 'unknown command'
+		
 		if wantsReceipt and self.sendReceipts:
 			self.methodsInterface.call("message_ack", (jid, messageId))
