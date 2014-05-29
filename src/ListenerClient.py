@@ -31,7 +31,8 @@ from Yowsup.connectionmanager import YowsupConnectionManager
 
 class WhatsappListenerClient:
 	
-	def __init__(self, keepAlive = False, sendReceipts = False):
+	#def __init__(self, keepAlive = False, sendReceipts = False):
+	def __init__(self, dropboxclt, keepAlive = False, sendReceipts = False):
 		self.sendReceipts = sendReceipts
 		
 		connectionManager = YowsupConnectionManager()
@@ -46,6 +47,10 @@ class WhatsappListenerClient:
 		self.signalsInterface.registerListener("disconnected", self.onDisconnected)
 		
 		self.cm = connectionManager
+		
+		##hubert
+		self.dropboxClt = dropboxclt
+		####
 	
 	def login(self, username, password):
 		self.username = username
@@ -68,6 +73,27 @@ class WhatsappListenerClient:
 	def onMessageReceived(self, messageId, jid, messageContent, timestamp, wantsReceipt, pushName, isBroadCast):
 		formattedDate = datetime.datetime.fromtimestamp(timestamp).strftime('%d-%m-%Y %H:%M')
 		print("%s [%s]:%s"%(jid, formattedDate, messageContent))
+		
+		#todo: switch messageContent
+		cmd_file = messageContent.split(':')
+		
+		print "command: %s\n" % cmd_file[0]
+		
+		if cmd_file[0].lower() == "upload":
+		    #self.boxClient.uploadfile(file)
+		    print 'cmd: upload, file: %s\n' % cmd_file[1]
+			
+		    with open(os.path.join('download/', cmd_file[1]), 'rb') as f:
+			response = self.dropboxClt.put_file('2pcc/1.pdf', f)
+			
+		elif cmd_file[0].lower() == "share":
+		    #self.boxClient.sharefile(file)
+		    print 'cmd: share, file: %s\n' % cmd_file[1]
+		elif cmd_file[0].lower() == "list":
+		    #self.boxClient.listfiles()
+		    print 'cmd: list\n'
+		else:
+		    print 'unknown command: %s\n' % messageContent
 
 		if wantsReceipt and self.sendReceipts:
 			self.methodsInterface.call("message_ack", (jid, messageId))

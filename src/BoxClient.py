@@ -29,48 +29,56 @@ from email.mime.text import MIMEText
 from dropbox import client, rest, session
 
 class DropboxClient:
+	#registered dropbox app key and secret
+        APP_KEY = 'q1ru9t5gazblj6k'
+        APP_SECRET = 'rksdnwguwh99tqq'
 	
-	def __init__(self, appKey, appSecret, mailbox, mailbox_usr, mailbox_pwd):
-	    self.APP_KEY = appKey
-	    self.APP_SECRET = appSecret
+	def __init__(self, mailbox, mailbox_usr, mailbox_pwd):
 	    self.mailbox = mailbox
-	    self.mailbox_usr = mailbox_usr
-	    self.mailbox_pwd = mailbox_pwd
+	    self.mailboxUsr = mailbox_usr
+	    self.mailboxPwd = mailbox_pwd
+	    self.mailServer = smtplib.SMTP('smtp.gmail.com:587') 
 	    self.dropboxClt = None
 	    self.accountInfo = None
+	    self.msg = None
+	    self.msgSubject = '2pcc message'
+	    
+        def sendMail()
+	    bRt = True
 		
+	    try:
+	        self.mail_server.ehlo()
+		self.mail_server.starttls()  
+		self.mail_server.login(self.mailboxUsr, self.mailboxPwd)  
+		self.mail_server.sendmail(self.mailbox, self.mailbox, self.msg.as_string())  
+		server.quit()
+	     except:
+		bRt = False
+	    
+	     return bRt
+	
 	def connect(self):
-	    sess = session.DropboxSession(self.APP_KEY, self.APP_SECRET)
+	    sess = session.DropboxSession(DropboxClient.APP_KEY, DropboxClient.APP_SECRET)
 	    request_token = sess.obtain_request_token()
 	    authorize_url = sess.build_authorize_url(request_token)
 	
-	    # The actual mail send
-	    msg = MIMEText(authorize_url)
-	    msg['Subject'] = '2pcc message'
+	    self.msg = MIMEText(authorize_url)
+	    self.msg['Subject'] = self.msg_subject
 		
 	    print "sending email to get auth...\n"
 
-	    try:
-	        server = smtplib.SMTP('smtp.gmail.com:587')  
-		server.ehlo()
-		server.starttls()  
-		server.login(self.mailbox_usr, self.mailbox_pwd)  
-		server.sendmail(self.mailbox, self.mailbox, msg.as_string())  
-		server.quit()
-	     except:
-		print "fail to send email notification!!"
+	    if !self.sendMail():
+	        print "fail to send email notification!!"
 		return False
 	
 	    print "email has been sent successfully!\n"
-	
-	    bAllow = False
-	
-	    while (bAllow is False):
-		time.sleep(3)
+		
+	    while True:
+		time.sleep(5)
 		
 		try:
 		    access_token = sess.obtain_access_token()
-		    bAllow = True
+		    break
 		except rest.ErrorResponse, e:
 		    print 'waitting user\'s auth...'
 		    continue

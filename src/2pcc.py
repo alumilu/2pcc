@@ -50,8 +50,8 @@ def main():
     if APP_KEY == '' or  APP_SECRET == '':
         exit("You need to set your APP_KEY and APP_SECRET!")
         
-    whatsappListner = WhatsappListenerClient(True, True)
-    whatsappListner.login(phone, base64.b64decode(bytes(pwd.encode('utf-8'))))
+    #whatsappListner = WhatsappListenerClient(True, True)
+    #whatsappListner.login(phone, base64.b64decode(bytes(pwd.encode('utf-8'))))
 	
     sess = session.DropboxSession(APP_KEY, APP_SECRET)
     request_token = sess.obtain_request_token()
@@ -94,6 +94,9 @@ def main():
     
     dropboxClt = client.DropboxClient(sess)	
     accountInfo = dropboxClt.account_info()
+	
+    whatsappListner = WhatsappListenerClient(dropboxClt, True, True)
+    whatsappListner.login(phone, base64.b64decode(bytes(pwd.encode('utf-8'))))
 	
     print "hello %s ! You just allow 2pcc to access and monitor changes in your dropbox.\n" % accountInfo['display_name']
    
